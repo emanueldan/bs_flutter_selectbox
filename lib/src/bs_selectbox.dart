@@ -566,11 +566,6 @@ class _BsSelectBoxState extends State<BsSelectBox>
         Color color = widget.style.hintTextColor;
         if (isOpen) color = widget.style.focusedTextColor;
 
-        if (widget.controller.getSelected() != null) {
-          color = widget.style.backgroundColor;
-          backgroundColor = Colors.white;
-        }
-
         if (!valid) color = BsColor.danger;
 
         return Positioned.fill(
