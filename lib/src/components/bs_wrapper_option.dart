@@ -245,8 +245,7 @@ class _BsWrapperOptionsState extends State<BsWrapperOptions> {
                                     decoration: BoxDecoration(
                                       color: widget.selectBoxStyle.searchColor,
                                       border: widget.selectBoxStyle.border,
-                                      borderRadius: BorderRadius.all(
-                                          Radius.circular(5.0)),
+                                      borderRadius: widget.selectBoxStyle.borderRadius,
                                     ),
                                     child: TextField(
                                       focusNode: _focusNode,
@@ -281,16 +280,7 @@ class _BsWrapperOptionsState extends State<BsWrapperOptions> {
                                       padding: EdgeInsets.fromLTRB(
                                           12.0, 5.0, 12.0, 5.0),
                                       margin: EdgeInsets.only(top: 8.0),
-                                      child: Text(
-                                        "Memproses ...",
-                                        style: TextStyle(
-                                            color:
-                                                widget.selectBoxStyle.textColor,
-                                            fontSize: widget
-                                                .selectBoxSize.optionFontSize,
-                                            fontWeight: FontWeight.w100,
-                                            fontStyle: FontStyle.italic),
-                                      ),
+                                      child: CircularProgressIndicator(),
                                     ),
                                   ),
                             widget.controller.processing ||
