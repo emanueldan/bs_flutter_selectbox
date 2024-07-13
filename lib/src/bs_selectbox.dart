@@ -310,7 +310,19 @@ class _BsSelectBoxState extends State<BsSelectBox>
           BoxBorder? border = widget.style.border;
           if (isOpen) border = widget.style.focusedBorder;
 
-          if (field.hasError) border = Border.all(color: BsColor.danger);
+          if (field.hasError) {
+            final borderColor =  widget.style.errorBorderColor;
+            if (border is Border) {
+              border = Border(
+                top: border?.top.copyWith(color: borderColor) ?? BorderSide.none,
+                left: border?.left.copyWith(color: borderColor) ?? BorderSide.none,
+                bottom: border?.bottom.copyWith(color: borderColor) ?? BorderSide.none,
+                right: border?.right.copyWith(color: borderColor) ?? BorderSide.none,
+              );
+            } else {
+              border = Border.all(color: borderColor);
+            }
+          }
 
           List<BoxShadow> boxShadow = [];
           if (isOpen) boxShadow = widget.style.focusedBoxShadow;
@@ -353,7 +365,7 @@ class _BsSelectBoxState extends State<BsSelectBox>
                           field.errorText!,
                           style: TextStyle(
                             fontSize: 12.0,
-                            color: BsColor.textError,
+                            color: widget.style.errorTextColor,
                           ),
                         ),
                       )
@@ -566,7 +578,7 @@ class _BsSelectBoxState extends State<BsSelectBox>
         Color color = widget.style.hintTextColor;
         if (isOpen) color = widget.style.focusedTextColor;
 
-        if (!valid) color = BsColor.danger;
+        if (!valid) color = widget.style.errorTextColor;
 
         return Positioned.fill(
           left: x,
