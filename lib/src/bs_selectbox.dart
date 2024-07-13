@@ -23,6 +23,7 @@ class BsSelectBox extends StatefulWidget {
     this.style = BsSelectBoxStyle.bordered,
     this.serverSide,
     this.searchable = false,
+    this.autoClose = true,
     this.disabled = false,
     this.validators = const [],
     this.onChange,
@@ -58,6 +59,8 @@ class BsSelectBox extends StatefulWidget {
   final bool searchable;
 
   final bool disabled;
+
+  final bool autoClose;
 
   final BsSelectBoxController controller;
 
@@ -210,9 +213,9 @@ class _BsSelectBoxState extends State<BsSelectBox>
 
         if (!widget.controller.multiple) {
           widget.controller.setSelected(option);
-
-          close();
         }
+
+        if(widget.autoClose) close();
 
         if (widget.onChange != null) widget.onChange!(option);
 
