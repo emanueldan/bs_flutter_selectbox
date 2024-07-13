@@ -30,6 +30,7 @@ class BsSelectBox extends StatefulWidget {
     this.onClear,
     this.onClose,
     this.onOpen,
+    this.onSaved,
     this.dialogStyle = const BsDialogBoxStyle(),
     this.paddingDialog = const EdgeInsets.all(10.0),
     this.marginDialog = const EdgeInsets.only(top: 2.0, bottom: 2.0),
@@ -83,6 +84,8 @@ class BsSelectBox extends StatefulWidget {
   final VoidCallback? onOpen;
 
   final VoidCallback? onClose;
+
+  final FormFieldSetter<List<BsSelectBoxOption>>? onSaved;
 }
 
 class _BsSelectBoxState extends State<BsSelectBox>
@@ -376,6 +379,8 @@ class _BsSelectBoxState extends State<BsSelectBox>
         onSaved: (value) {
           formFieldState.didChange(value);
           formFieldState.validate();
+          final selected = widget.controller.getSelectedAll();
+          widget.onSaved?.call(selected);
         },
       ),
     );
