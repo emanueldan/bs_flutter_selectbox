@@ -302,9 +302,9 @@ class _BsSelectBoxState extends State<BsSelectBox>
           Future.delayed(
             Duration(milliseconds: 100),
             () {
-              if (field.mounted &&
-                  widget.controller.getSelectedAsString() != '')
-                field.didChange(widget.controller.getSelectedAsString());
+              final value = widget.controller.getSelectedAsString();
+              if (field.mounted && value != '' && value != null)
+                field.didChange(value);
             },
           );
 
