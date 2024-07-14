@@ -304,15 +304,6 @@ class _BsSelectBoxState extends State<BsSelectBox>
           return _errorText;
         },
         builder: (field) {
-          Future.delayed(
-            Duration(milliseconds: 100),
-            () {
-              final value = widget.controller.getSelectedAsString();
-              if (field.mounted && value != '' && value != null)
-                field.didChange(value);
-            },
-          );
-
           formFieldState = field;
 
           BoxBorder? border = widget.style.border;
