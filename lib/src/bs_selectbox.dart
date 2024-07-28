@@ -451,7 +451,7 @@ class _BsSelectBoxState extends State<BsSelectBox>
                             ),
                           ),
                         ),
-                  widget.controller.getSelected() == null
+                  widget.controller.getSelected() == null || widget.disabled
                       ? Container(width: 0, height: 0)
                       : Container(
                           padding: EdgeInsets.all(5.0),
@@ -505,6 +505,10 @@ class _BsSelectBoxState extends State<BsSelectBox>
                 color: Colors.transparent,
                 child: InkWell(
                   onTap: () {
+                    if (widget.disabled) {
+                      return;
+                    }
+
                     if (_keyOverlay.currentState != null &&
                         _keyOverlay.currentState!.mounted)
                       _keyOverlay.currentState!.setState(() {});
@@ -539,7 +543,7 @@ class _BsSelectBoxState extends State<BsSelectBox>
                             child: option.getText(),
                           ),
                         ),
-                        Icon(
+                        if (!widget.disabled) Icon(
                           Icons.close,
                           size: widget.style.fontSize - 2,
                           color: widget.style.selectedTextColor,
