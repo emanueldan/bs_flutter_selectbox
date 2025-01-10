@@ -9,6 +9,8 @@ class BsSelectBoxStyle {
     this.selectedTextColor = const Color(0xff212529),
     this.textColor = const Color(0xff212529),
     this.hintTextColor = Colors.grey,
+    this.errorTextColor = BsColor.danger,
+    this.errorBorderColor = BsColor.danger,
     this.border,
     this.disabledColor = const Color(0xffe7e7e7),
     this.disabledTextColor = const Color(0xffdedede),
@@ -29,6 +31,12 @@ class BsSelectBoxStyle {
 
   /// define hintTextColor of [BsSelectBox]
   final Color hintTextColor;
+
+  /// define error color of [BsSelectBox]
+  final Color errorTextColor;
+
+  /// define error color of [BsSelectBox]
+  final Color errorBorderColor;
 
   /// define selectedBackgroundColor of [BsSelectBox]
   final Color selectedColor;

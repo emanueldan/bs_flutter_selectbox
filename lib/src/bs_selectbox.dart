@@ -23,6 +23,7 @@ class BsSelectBox extends StatefulWidget {
     this.style = BsSelectBoxStyle.bordered,
     this.serverSide,
     this.searchable = false,
+    this.autoClose = true,
     this.disabled = false,
     this.validators = const [],
     this.onChange,
@@ -30,6 +31,7 @@ class BsSelectBox extends StatefulWidget {
     this.onClear,
     this.onClose,
     this.onOpen,
+    this.onSaved,
     this.dialogStyle = const BsDialogBoxStyle(),
     this.paddingDialog = const EdgeInsets.all(10.0),
     this.marginDialog = const EdgeInsets.only(top: 2.0, bottom: 2.0),
@@ -58,6 +60,8 @@ class BsSelectBox extends StatefulWidget {
 
   final bool disabled;
 
+  final bool autoClose;
+
   final BsSelectBoxController controller;
 
   final BsSelectBoxServerSide? serverSide;
@@ -83,6 +87,8 @@ class BsSelectBox extends StatefulWidget {
   final VoidCallback? onOpen;
 
   final VoidCallback? onClose;
+
+  final FormFieldSetter<List<BsSelectBoxOption>>? onSaved;
 }
 
 class _BsSelectBoxState extends State<BsSelectBox>
@@ -207,9 +213,9 @@ class _BsSelectBoxState extends State<BsSelectBox>
 
         if (!widget.controller.multiple) {
           widget.controller.setSelected(option);
-
-          close();
         }
+
+        if(widget.autoClose) close();
 
         if (widget.onChange != null) widget.onChange!(option);
 
@@ -266,7 +272,9 @@ class _BsSelectBoxState extends State<BsSelectBox>
 
     if (widget.onClear != null) widget.onClear!();
 
-    updateState(() => _focusNode.requestFocus());
+    if (!formFieldState.isValid) {
+      updateState(() => _focusNode.requestFocus());
+    }
   }
 
   String? _errorText;
@@ -296,21 +304,24 @@ class _BsSelectBoxState extends State<BsSelectBox>
           return _errorText;
         },
         builder: (field) {
-          Future.delayed(
-            Duration(milliseconds: 100),
-            () {
-              if (field.mounted &&
-                  widget.controller.getSelectedAsString() != '')
-                field.didChange(widget.controller.getSelectedAsString());
-            },
-          );
-
           formFieldState = field;
 
           BoxBorder? border = widget.style.border;
           if (isOpen) border = widget.style.focusedBorder;
 
-          if (field.hasError) border = Border.all(color: BsColor.danger);
+          if (field.hasError) {
+            final borderColor =  widget.style.errorBorderColor;
+            if (border is Border) {
+              border = Border(
+                top: border?.top.copyWith(color: borderColor) ?? BorderSide.none,
+                left: border?.left.copyWith(color: borderColor) ?? BorderSide.none,
+                bottom: border?.bottom.copyWith(color: borderColor) ?? BorderSide.none,
+                right: border?.right.copyWith(color: borderColor) ?? BorderSide.none,
+              );
+            } else {
+              border = Border.all(color: borderColor);
+            }
+          }
 
           List<BoxShadow> boxShadow = [];
           if (isOpen) boxShadow = widget.style.focusedBoxShadow;
@@ -353,7 +364,7 @@ class _BsSelectBoxState extends State<BsSelectBox>
                           field.errorText!,
                           style: TextStyle(
                             fontSize: 12.0,
-                            color: BsColor.textError,
+                            color: widget.style.errorTextColor,
                           ),
                         ),
                       )
@@ -364,6 +375,8 @@ class _BsSelectBoxState extends State<BsSelectBox>
         onSaved: (value) {
           formFieldState.didChange(value);
           formFieldState.validate();
+          final selected = widget.controller.getSelectedAll();
+          widget.onSaved?.call(selected);
         },
       ),
     );
@@ -438,7 +451,7 @@ class _BsSelectBoxState extends State<BsSelectBox>
                             ),
                           ),
                         ),
-                  widget.controller.getSelected() == null
+                  widget.controller.getSelected() == null || widget.disabled
                       ? Container(width: 0, height: 0)
                       : Container(
                           padding: EdgeInsets.all(5.0),
@@ -492,6 +505,10 @@ class _BsSelectBoxState extends State<BsSelectBox>
                 color: Colors.transparent,
                 child: InkWell(
                   onTap: () {
+                    if (widget.disabled) {
+                      return;
+                    }
+
                     if (_keyOverlay.currentState != null &&
                         _keyOverlay.currentState!.mounted)
                       _keyOverlay.currentState!.setState(() {});
@@ -526,7 +543,7 @@ class _BsSelectBoxState extends State<BsSelectBox>
                             child: option.getText(),
                           ),
                         ),
-                        Icon(
+                        if (!widget.disabled) Icon(
                           Icons.close,
                           size: widget.style.fontSize - 2,
                           color: widget.style.selectedTextColor,
@@ -566,12 +583,7 @@ class _BsSelectBoxState extends State<BsSelectBox>
         Color color = widget.style.hintTextColor;
         if (isOpen) color = widget.style.focusedTextColor;
 
-        if (widget.controller.getSelected() != null) {
-          color = widget.style.backgroundColor;
-          backgroundColor = Colors.white;
-        }
-
-        if (!valid) color = BsColor.danger;
+        if (!valid) color = widget.style.errorTextColor;
 
         return Positioned.fill(
           left: x,
